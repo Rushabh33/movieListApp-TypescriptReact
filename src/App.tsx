@@ -63,6 +63,7 @@ const App = () => {
   const [currListOfMovieResults, setcurrListOfMovieResults] = useState<
     MovieData[]
   >([]);
+  const [isMaxNomination, setIsMaxNomination] = useState<boolean>(false);
 
   useEffect(() => {
     //turn on loading here
@@ -76,6 +77,13 @@ const App = () => {
     }
   }, [currentFilterQuery]);
 
+  useEffect(() => {
+    if ((currNominations.length = 5)) {
+      setIsMaxNomination(true);
+      // AND SHOW BANNER THAT DISSAPEARS AFTER A FEW MINS: MAY 8
+    }
+  }, [currNominations]);
+
   const handleUserFilterInputs = (evt: User2FilterQueries) => {
     let currentUserQueryState = { ...currentFilterQuery };
     if (evt.target.name === "searchQuery") {
@@ -88,6 +96,8 @@ const App = () => {
   };
 
   const handleAddNomination = (movieId: string) => {
+    // if IsMaxNomination IS TRUE, then we can't do ANY OF THIS: MAY 8
+
     console.log("movieId: ", movieId);
     const movieToNominate = currListOfMovieResults.filter((movieData) => {
       return movieData.imdbID === movieId;
@@ -97,8 +107,11 @@ const App = () => {
     // take this string, compare it to the current nominations, and remove it
   };
 
-  const handleRemoveNomination = () => {
-    // MAY 7th!!!!!!!!!!!!!
+  const handleRemoveNomination = (param: string) => {
+    const newNominationList = currNominations.filter((nom) => {
+      return nom.imdbID !== param;
+    });
+    setCurrNominations([...newNominationList]);
   };
 
   return (
@@ -106,7 +119,10 @@ const App = () => {
       <header>
         <nav>{/* <a href="#">hello</a>
           <a href="#">2ello</a> */}</nav>
-        <Nominations currNominations={currNominations} />
+        <Nominations
+          currNominations={currNominations}
+          handleRemoveNomination={handleRemoveNomination}
+        />
       </header>
       <main>
         <section>

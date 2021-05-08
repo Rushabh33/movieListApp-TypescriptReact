@@ -13,10 +13,6 @@ interface Props {
 //   background: red;
 // `;
 
-// type NominationIds = {
-//   movieId: string
-// }
-
 const ListOfMovies = (props: Props) => {
   const {
     currListOfMovieResults,
@@ -24,26 +20,11 @@ const ListOfMovies = (props: Props) => {
     handleAddNomination,
   } = props;
 
-  // useEffect(() => {
-  //   console.log("currListOfMovieResults: ", currListOfMovieResults);
-  // }, []);
-
   const currNominationIds: string[] =
     currNominations && currNominations.map((movieData) => movieData.imdbID);
 
-  // const currNominationIds: string[] = () => {
-  //   return (
-  //     currNominations && currNominations.map((movieData) => movieData.imdbID)
-  //   );
-  // };
-
   const displayMovies = (data: MovieData[]) => {
     return data.map((movie) => {
-      // Before displaying the movies we need to:
-      // Filter out all the moves that are a part of the NominationList
-      // here! If movie IS IN NOMINATION, say nomination TRUE,
-      // and wrap the button in a condition...or styled prop?
-      console.log("currNominationIds: ", currNominationIds);
       const isDisabled: boolean = currNominationIds.includes(movie.imdbID);
       return (
         <li key={movie.imdbID + "-nom"}>

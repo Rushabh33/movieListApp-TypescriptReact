@@ -3,10 +3,11 @@ import { MovieData } from "../App";
 
 type Props = {
   currNominations: MovieData[];
+  handleRemoveNomination: (param: string) => void;
 };
 
 const Nominations = (props: Props) => {
-  const { currNominations } = props;
+  const { currNominations, handleRemoveNomination } = props;
 
   const displayMovies = (data: MovieData[]) => {
     return data.map((movie) => {
@@ -17,7 +18,9 @@ const Nominations = (props: Props) => {
           {movie.Year}
           {movie.Type}
           {movie.imdbID}
-          <button>remove Nom</button>
+          <button onClick={() => handleRemoveNomination(movie.imdbID)}>
+            remove Nom
+          </button>
         </li>
       );
     });
