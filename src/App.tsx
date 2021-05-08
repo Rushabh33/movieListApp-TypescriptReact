@@ -1,47 +1,128 @@
-import React, { useState, useEffect, Fragment } from "react";
-import FilterQueries from "./components/FilterQueries";
+import React, { useState, useEffect } from "react";
+import FilterInputs from "./components/FilterInputs";
 import Nominations from "./components/Nominations";
-import QueryResults from "./components/QueryResults";
+import ListOfMovies from "./components/ListOfMovies";
 
-export type FilterQueryProps = {
+export interface User2FilterQueries {
+  // this is to make sure that OF the incoming event variables, we are/can only use target, name and value
+  target: {
+    name: string;
+    value: string;
+  };
+}
+
+// this is the data type STATE is using, and how the evt variables should be interpreted
+type CurrentUserFilterQueries = {
   searchQuery: string;
+  yearQuery: string;
+  pageQuery: string;
+};
+
+// this includes error because even a successful call carries the error property
+type MovieApiResponse = {
+  Response: boolean;
+  Error?: string;
+  totalResults?: string;
+  // I"M CONFUSED, shouldn't this be 'Search?'?!?!!?!
+  Search: Array<MovieData>;
+};
+
+export interface MovieData {
+  Poster: string;
+  Title: string;
+  Type: string;
+  Year: string;
+  imdbID: string;
+}
+
+const getMoviesApi = async (
+  allUserQueries: CurrentUserFilterQueries
+): Promise<MovieApiResponse> => {
+  const url = `http://www.omdbapi.com/?apikey=2b75fdb1`;
+  const userSearchQuery = `&s=` + allUserQueries.searchQuery;
+  const userYearQuery = `&y=` + allUserQueries.yearQuery;
+  const userPageQuery = `&page=` + allUserQueries.pageQuery;
+  const response = await fetch(
+    url + userSearchQuery + userYearQuery + userPageQuery
+  );
+  const data: MovieApiResponse = await response.json();
+  return data;
 };
 
 const App = () => {
   const [
     currentFilterQuery,
     setCurrentFilterQuery,
-  ] = useState<FilterQueryProps | null>(null);
+  ] = useState<CurrentUserFilterQueries>({
+    searchQuery: "",
+    yearQuery: "",
+    pageQuery: "1",
+  });
+
+  const [currNominations, setCurrNominations] = useState<MovieData[]>([]);
+  const [currListOfMovieResults, setcurrListOfMovieResults] = useState<
+    MovieData[]
+  >([]);
 
   useEffect(() => {
-    console.log("currentFilterQuery: ", currentFilterQuery);
-    // Call the API - reference the wealthsimple api then rossintel
-    // Push the results to a new List-Of-Movies State
-    // Pass List-Of-Movies down to results
-    // THEN create a nomination list state on this component and pass that list down to the Nominations component
-    // create a function on this component which adds/removes movies from the nomination list based on button name?
-    // Pass that function down to the Results component that should trigger on a buttons (add & remove)
-    // then verify
+    //turn on loading here
+    if (currentFilterQuery && currentFilterQuery.searchQuery) {
+      console.log("currentFilterQuery: ", currentFilterQuery);
+      getMoviesApi(currentFilterQuery).then((data) => {
+        console.log("data.Response: ", data.Response);
+        if (data.Response === false) return;
+        setcurrListOfMovieResults(data.Search);
+      });
+    }
   }, [currentFilterQuery]);
 
+  const handleUserFilterInputs = (evt: User2FilterQueries) => {
+    let currentUserQueryState = { ...currentFilterQuery };
+    if (evt.target.name === "searchQuery") {
+      currentUserQueryState.searchQuery = evt.target.value;
+    }
+    if (evt.target.name === "yearQuery") {
+      currentUserQueryState.searchQuery = evt.target.value;
+    }
+    setCurrentFilterQuery(currentUserQueryState);
+  };
+
+  const handleAddNomination = (movieId: string) => {
+    console.log("movieId: ", movieId);
+    const movieToNominate = currListOfMovieResults.filter((movieData) => {
+      return movieData.imdbID === movieId;
+    });
+    console.log("movieToNominate: ", movieToNominate);
+    setCurrNominations([...currNominations, ...movieToNominate]);
+    // take this string, compare it to the current nominations, and remove it
+  };
+
+  const handleRemoveNomination = () => {
+    // MAY 7th!!!!!!!!!!!!!
+  };
+
   return (
-    <Fragment>
+    <>
       <header>
         <nav>{/* <a href="#">hello</a>
           <a href="#">2ello</a> */}</nav>
-        <Nominations />
+        <Nominations currNominations={currNominations} />
       </header>
       <main>
         <section>
           <p>T3his is the top body</p>
         </section>
-        <FilterQueries setCurrentFilterQuery={setCurrentFilterQuery} />
-        <QueryResults />
+        <FilterInputs handleUserFilterInputs={handleUserFilterInputs} />
+        <ListOfMovies
+          currListOfMovieResults={currListOfMovieResults}
+          currNominations={currNominations}
+          handleAddNomination={handleAddNomination}
+        />
       </main>
       <footer>
         <p>Footers</p>
       </footer>
-    </Fragment>
+    </>
   );
 };
 
