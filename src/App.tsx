@@ -90,8 +90,7 @@ export interface MovieData {
 const getMoviesApi = async (
   allUserQueries: CurrentUserFilterQueries
 ): Promise<MovieApiResponse> => {
-  const url = `http://www.omdbapi.com/?apikey=2b75fdb1`;
-  console.log("allUserQueries: ", allUserQueries);
+  const url = `https://www.omdbapi.com/?apikey=2b75fdb1`;
   const userSearchQuery = `&s=` + allUserQueries.searchQuery;
   const userYearQuery = `&y=` + allUserQueries.yearQuery;
   const typeOfNomination = `&type=movie`;
