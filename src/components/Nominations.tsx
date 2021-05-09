@@ -10,6 +10,7 @@ const Nominations = (props: Props) => {
   const { currNominations, handleRemoveNomination } = props;
 
   const displayMovies = (data: MovieData[]) => {
+    console.log("data: ", data);
     return data.map((movie) => {
       return (
         <li key={movie.imdbID}>

@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import FilterInputs from "./components/FilterInputs";
 import Nominations from "./components/Nominations";
 import ListOfMovies from "./components/ListOfMovies";
+
+const AlertBanner = styled.div<{ notificationTrigger: boolean }>`
+  opacity: ${(props) => (props.notificationTrigger ? 1 : 0)};
+  height: ${(props) => (props.notificationTrigger ? "90px" : 0)};
+  /* color: ${(props) =>
+    props.notificationTrigger ? "black" : "transparent"}; */
+  overflow: hidden;
+  transition: all 1s;
+  background: grey;
+`;
 
 export interface User2FilterQueries {
   // this is to make sure that OF the incoming event variables, we are/can only use target, name and value
@@ -64,6 +75,9 @@ const App = () => {
     MovieData[]
   >([]);
   const [isMaxNomination, setIsMaxNomination] = useState<boolean>(false);
+  const [notificationTrigger, setNotificationTrigger] = useState<boolean>(
+    false
+  );
 
   useEffect(() => {
     //turn on loading here
@@ -78,10 +92,12 @@ const App = () => {
   }, [currentFilterQuery]);
 
   useEffect(() => {
-    if ((currNominations.length = 5)) {
+    if (currNominations.length === 5) {
       setIsMaxNomination(true);
-      // AND SHOW BANNER THAT DISSAPEARS AFTER A FEW MINS: MAY 8
+      triggerNotificationBanner();
+      //   // AND SHOW BANNER THAT DISSAPEARS AFTER A FEW MINS: MAY 8
     }
+    setIsMaxNomination(false);
   }, [currNominations]);
 
   const handleUserFilterInputs = (evt: User2FilterQueries) => {
@@ -97,7 +113,9 @@ const App = () => {
 
   const handleAddNomination = (movieId: string) => {
     // if IsMaxNomination IS TRUE, then we can't do ANY OF THIS: MAY 8
-
+    if (isMaxNomination === true) {
+      return;
+    }
     console.log("movieId: ", movieId);
     const movieToNominate = currListOfMovieResults.filter((movieData) => {
       return movieData.imdbID === movieId;
@@ -114,6 +132,13 @@ const App = () => {
     setCurrNominations([...newNominationList]);
   };
 
+  const triggerNotificationBanner = () => {
+    setNotificationTrigger(true);
+    setTimeout(() => {
+      setNotificationTrigger(false);
+    }, 5000);
+  };
+
   return (
     <>
       <header>
@@ -123,6 +148,11 @@ const App = () => {
           currNominations={currNominations}
           handleRemoveNomination={handleRemoveNomination}
         />
+        <AlertBanner notificationTrigger={notificationTrigger}>
+          <img src="" alt="" />
+          <p>You've reached your maximum number of nominations</p>
+          <p>Remove to add new nominations</p>
+        </AlertBanner>
       </header>
       <main>
         <section>
