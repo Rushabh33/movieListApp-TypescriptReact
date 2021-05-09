@@ -3,11 +3,51 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { defaultTheme } from "./theme";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider, createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 100%;
+  }
+
+  body {
+    background: lightgray;
+  }
+
+  body, p, ul {
+    margin: 0
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  p {
+    font-size: 0.8rem
+  }
+
+  @media (min-width: 768px) {    
+    p {
+      font-size: 0.9rem
+    }  
+  }
+
+`;
 
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={defaultTheme}>
+      <GlobalStyle />
       <App />
     </ThemeProvider>
   </React.StrictMode>,

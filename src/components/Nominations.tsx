@@ -1,50 +1,37 @@
 import * as React from "react";
+import styled from "styled-components";
 import { MovieData } from "../App";
+import MovieCard from "../components/MovieCard";
 
-type Props = {
+const Title = styled.h1`
+  text-align: center;
+  margin-top: 50px;
+`;
+
+const StyledP = styled.p`
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+type ComponentProps = {
   currNominations: MovieData[];
   handleRemoveNomination: (param: string) => void;
 };
 
-const Nominations = (props: Props) => {
+const Nominations = (props: ComponentProps) => {
   const { currNominations, handleRemoveNomination } = props;
-
-  const displayMovies = (data: MovieData[]) => {
-    console.log("data: ", data);
-    return data.map((movie) => {
-      return (
-        <li key={movie.imdbID}>
-          {movie.Poster}
-          {movie.Title}
-          {movie.Year}
-          {movie.Type}
-          {movie.imdbID}
-          <button onClick={() => handleRemoveNomination(movie.imdbID)}>
-            remove Nom
-          </button>
-        </li>
-      );
-    });
-  };
-
-  const noResultData = [
-    {
-      Poster: "poster",
-      Title: "string",
-      Type: "string",
-      Year: "string",
-      imdbID: "string",
-    },
-  ];
 
   return (
     <div>
-      <h1>Nominations</h1>
-      <ul>
-        {currNominations && currNominations.length
-          ? displayMovies(currNominations)
-          : displayMovies(noResultData)}
-      </ul>
+      <Title>Your 5 Nominations</Title>
+      <StyledP>
+        pick your next nomination in the 'Choose your Nominees' section below
+      </StyledP>
+      <MovieCard
+        currNominations={currNominations}
+        handleRemoveNomination={handleRemoveNomination}
+        isNomineeList={true}
+      />
     </div>
   );
 };

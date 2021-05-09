@@ -1,28 +1,66 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Wrapper from "./components/Wrapper";
 import FilterInputs from "./components/FilterInputs";
 import Nominations from "./components/Nominations";
 import ListOfMovies from "./components/ListOfMovies";
 
-const AlertBanner = styled.div<{ notificationTrigger: boolean }>`
-  opacity: ${(props) => (props.notificationTrigger ? 1 : 0)};
-  height: ${(props) => (props.notificationTrigger ? "90px" : 0)};
-  /* color: ${(props) =>
-    props.notificationTrigger ? "black" : "transparent"}; */
-  overflow: hidden;
-  transition: all 1s;
-  background: grey;
+const AppContainer = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  a:first-child p {
+    font-size: 1.2rem;
+  }
+
+  @media (min-width: 768px) {
+    a:first-child p {
+      font-size: 2rem;
+    }
+  }
 `;
 
-export interface User2FilterQueries {
-  // this is to make sure that OF the incoming event variables, we are/can only use target, name and value
+const AppHeader = styled.header`
+  position: relative;
+`;
+
+const AppNav = styled.nav`
+  padding: 20px 0 10px;
+  height: 60px;
+  background: white;
+`;
+
+const NavContents = styled(Wrapper)`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  a:last-child {
+    font-size: 0.6rem;
+  }
+`;
+
+const AlertBanner = styled(Wrapper)<{ notificationTrigger: boolean }>`
+  opacity: ${(props) => (props.notificationTrigger ? 1 : 0)};
+  height: ${(props) => (props.notificationTrigger ? "40px" : 0)};
+  overflow: hidden;
+  transition: all 6s;
+  background: grey;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  position: absolute;
+  top: 60px;
+`;
+
+export interface UserInputValues {
   target: {
     name: string;
     value: string;
   };
 }
 
-// this is the data type STATE is using, and how the evt variables should be interpreted
 type CurrentUserFilterQueries = {
   searchQuery: string;
   yearQuery: string;
@@ -31,7 +69,7 @@ type CurrentUserFilterQueries = {
 
 // this includes error because even a successful call carries the error property
 type MovieApiResponse = {
-  Response: boolean;
+  Response: string;
   Error?: string;
   totalResults?: string;
   // I"M CONFUSED, shouldn't this be 'Search?'?!?!!?!
@@ -50,11 +88,13 @@ const getMoviesApi = async (
   allUserQueries: CurrentUserFilterQueries
 ): Promise<MovieApiResponse> => {
   const url = `http://www.omdbapi.com/?apikey=2b75fdb1`;
+  console.log("allUserQueries: ", allUserQueries);
   const userSearchQuery = `&s=` + allUserQueries.searchQuery;
   const userYearQuery = `&y=` + allUserQueries.yearQuery;
+  const typeOfNomination = `&type=movie`;
   const userPageQuery = `&page=` + allUserQueries.pageQuery;
   const response = await fetch(
-    url + userSearchQuery + userYearQuery + userPageQuery
+    url + userSearchQuery + userYearQuery + userPageQuery + typeOfNomination
   );
   const data: MovieApiResponse = await response.json();
   return data;
@@ -69,7 +109,6 @@ const App = () => {
     yearQuery: "",
     pageQuery: "1",
   });
-
   const [currNominations, setCurrNominations] = useState<MovieData[]>([]);
   const [currListOfMovieResults, setcurrListOfMovieResults] = useState<
     MovieData[]
@@ -78,51 +117,54 @@ const App = () => {
   const [notificationTrigger, setNotificationTrigger] = useState<boolean>(
     false
   );
+  const [totalResults, setTotalResults] = useState<string>("");
+  const maxNumberOfNominations = 5;
 
   useEffect(() => {
-    //turn on loading here
     if (currentFilterQuery && currentFilterQuery.searchQuery) {
-      console.log("currentFilterQuery: ", currentFilterQuery);
       getMoviesApi(currentFilterQuery).then((data) => {
-        console.log("data.Response: ", data.Response);
-        if (data.Response === false) return;
-        setcurrListOfMovieResults(data.Search);
+        console.log("data: ", data);
+        if (data.Response.toLowerCase() === "false") {
+          console.log("FIX data response issue ", data.Response);
+          setcurrListOfMovieResults([]);
+          return;
+        }
+        data.Search && setcurrListOfMovieResults(data.Search);
+        data.totalResults && setTotalResults(data.totalResults);
       });
     }
   }, [currentFilterQuery]);
 
   useEffect(() => {
-    if (currNominations.length === 5) {
+    if (currNominations.length === maxNumberOfNominations) {
       setIsMaxNomination(true);
       triggerNotificationBanner();
-      //   // AND SHOW BANNER THAT DISSAPEARS AFTER A FEW MINS: MAY 8
+      return;
     }
     setIsMaxNomination(false);
   }, [currNominations]);
 
-  const handleUserFilterInputs = (evt: User2FilterQueries) => {
+  const handleUserFilterInputs = (evt: UserInputValues) => {
     let currentUserQueryState = { ...currentFilterQuery };
+
     if (evt.target.name === "searchQuery") {
       currentUserQueryState.searchQuery = evt.target.value;
     }
+
     if (evt.target.name === "yearQuery") {
-      currentUserQueryState.searchQuery = evt.target.value;
+      currentUserQueryState.yearQuery = evt.target.value;
     }
     setCurrentFilterQuery(currentUserQueryState);
   };
 
   const handleAddNomination = (movieId: string) => {
-    // if IsMaxNomination IS TRUE, then we can't do ANY OF THIS: MAY 8
     if (isMaxNomination === true) {
       return;
     }
-    console.log("movieId: ", movieId);
     const movieToNominate = currListOfMovieResults.filter((movieData) => {
       return movieData.imdbID === movieId;
     });
-    console.log("movieToNominate: ", movieToNominate);
     setCurrNominations([...currNominations, ...movieToNominate]);
-    // take this string, compare it to the current nominations, and remove it
   };
 
   const handleRemoveNomination = (param: string) => {
@@ -140,24 +182,33 @@ const App = () => {
   };
 
   return (
-    <>
-      <header>
-        <nav>{/* <a href="#">hello</a>
-          <a href="#">2ello</a> */}</nav>
+    <AppContainer>
+      <AppHeader>
+        <AppNav>
+          <NavContents>
+            <a href="/">
+              <p>The Shoppies</p>{" "}
+            </a>
+            <a
+              href="https://www.linkedin.com/in/rushabhparekh33/?originalSubdomain=ca"
+              target="_blank"
+            >
+              <p>by Rushabh Parekh</p>
+            </a>
+          </NavContents>
+        </AppNav>
+
         <Nominations
           currNominations={currNominations}
           handleRemoveNomination={handleRemoveNomination}
         />
         <AlertBanner notificationTrigger={notificationTrigger}>
-          <img src="" alt="" />
+          {/* <img src="" alt="" /> */}
           <p>You've reached your maximum number of nominations</p>
           <p>Remove to add new nominations</p>
         </AlertBanner>
-      </header>
+      </AppHeader>
       <main>
-        <section>
-          <p>T3his is the top body</p>
-        </section>
         <FilterInputs handleUserFilterInputs={handleUserFilterInputs} />
         <ListOfMovies
           currListOfMovieResults={currListOfMovieResults}
@@ -165,10 +216,7 @@ const App = () => {
           handleAddNomination={handleAddNomination}
         />
       </main>
-      <footer>
-        <p>Footers</p>
-      </footer>
-    </>
+    </AppContainer>
   );
 };
 
