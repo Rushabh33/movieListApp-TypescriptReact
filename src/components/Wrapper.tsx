@@ -1,4 +1,3 @@
-// import React from "react";
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
@@ -8,14 +7,4 @@ export const Wrapper = styled.div`
 
   padding: 0 5vw;
 `;
-// type WrapperProps = {
-//   children: React.ReactNode;
-//   //   className: string;
-// };
-
-// const Wrapper = (props: WrapperProps) => {
-//   const { children } = props;
-//   return <StyledWrapper>{children}</StyledWrapper>;
-// };
-
 export default Wrapper;

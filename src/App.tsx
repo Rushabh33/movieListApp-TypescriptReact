@@ -113,9 +113,6 @@ const App = () => {
     pageQuery: "1",
   });
 
-  // const [currSearchQuery, setCurrSearchQuery] = useState<string>("");
-  // const [currYearQuery, setCurrYearQuery] = useState<string>("");
-  // const [currPageQuery, setCurrPageQuery] = useState<string>("");
   const [currNominations, setCurrNominations] = useState<MovieData[]>([]);
   const [currListOfMovieResults, setCurrListOfMovieResults] = useState<
     MovieData[]
@@ -125,16 +122,7 @@ const App = () => {
     false
   );
   const [totalResults, setTotalResults] = useState<string>("");
-
   const maxNumberOfNominations = 5;
-
-  // const APIcallWrapper = React.useCallback(
-  //   (newData: any) => {
-  //     console.log("newData: ", newData);
-  //     setCurrListOfMovieResults([...currListOfMovieResults, ...newData]);
-  //   },
-  //   [currListOfMovieResults]
-  // );
 
   useEffect(() => {
     if (currentFilterQuery && currentFilterQuery.searchQuery) {
@@ -144,9 +132,8 @@ const App = () => {
             setCurrListOfMovieResults([]);
             return;
           }
-          // can't add this!?!?!
           if (+currentFilterQuery.pageQuery > +"1") {
-            //  &&
+            // learn to apply useRef() this instead of ...prev
             setCurrListOfMovieResults((prev) => [...prev, ...data.Search]);
             return;
           }
@@ -158,25 +145,6 @@ const App = () => {
         });
     }
   }, [currentFilterQuery]);
-
-  // useEffect(() => {
-  //   if (currPageQuery > "1") {
-  //     getMoviesApi(currentFilterQuery)
-  //     .then((data) => {
-  //       data.Search &&
-  //       setCurrListOfMovieResults([
-  //         ...currListOfMovieResults,
-  //         ...data.Search,
-  //       ]);
-  //     })
-  //     .catch((err) => {
-  //       console.log("err: ", err);
-  //     });
-
-  //     return;
-  //   }
-
-  // }, [currPageQuery])
 
   useEffect(() => {
     if (currNominations.length === maxNumberOfNominations) {
@@ -237,7 +205,6 @@ const App = () => {
     currentUserQueryState.pageQuery = `${+currentUserQueryState.pageQuery + 1}`;
 
     setCurrentFilterQuery(currentUserQueryState);
-    // setCurrPageQuery(currentUserQueryState.pageQuery);
   };
 
   return (
