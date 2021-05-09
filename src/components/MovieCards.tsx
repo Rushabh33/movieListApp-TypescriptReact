@@ -69,6 +69,7 @@ const noResultData = [
     imdbID: "placeholder",
   },
 ];
+
 const placeHolderData = [
   {
     Poster: "poster",
