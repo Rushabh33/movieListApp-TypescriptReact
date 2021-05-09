@@ -112,6 +112,10 @@ const App = () => {
     yearQuery: "",
     pageQuery: "1",
   });
+
+  // const [currSearchQuery, setCurrSearchQuery] = useState<string>("");
+  // const [currYearQuery, setCurrYearQuery] = useState<string>("");
+  // const [currPageQuery, setCurrPageQuery] = useState<string>("");
   const [currNominations, setCurrNominations] = useState<MovieData[]>([]);
   const [currListOfMovieResults, setCurrListOfMovieResults] = useState<
     MovieData[]
@@ -121,7 +125,16 @@ const App = () => {
     false
   );
   const [totalResults, setTotalResults] = useState<string>("");
+
   const maxNumberOfNominations = 5;
+
+  // const APIcallWrapper = React.useCallback(
+  //   (newData: any) => {
+  //     console.log("newData: ", newData);
+  //     setCurrListOfMovieResults([...currListOfMovieResults, ...newData]);
+  //   },
+  //   [currListOfMovieResults]
+  // );
 
   useEffect(() => {
     if (currentFilterQuery && currentFilterQuery.searchQuery) {
@@ -131,23 +144,39 @@ const App = () => {
             setCurrListOfMovieResults([]);
             return;
           }
-          if (currentFilterQuery.pageQuery > "1") {
-            data.Search &&
-              setCurrListOfMovieResults([
-                ...currListOfMovieResults,
-                ...data.Search,
-              ]);
+          // can't add this!?!?!
+          if (+currentFilterQuery.pageQuery > +"1") {
+            //  &&
+            setCurrListOfMovieResults((prev) => [...prev, ...data.Search]);
             return;
           }
           data.Search && setCurrListOfMovieResults([...data.Search]);
           data.totalResults && setTotalResults(data.totalResults);
-          console.log("data.totalResults: ", data.totalResults);
         })
         .catch((err) => {
           console.log("err: ", err);
         });
     }
   }, [currentFilterQuery]);
+
+  // useEffect(() => {
+  //   if (currPageQuery > "1") {
+  //     getMoviesApi(currentFilterQuery)
+  //     .then((data) => {
+  //       data.Search &&
+  //       setCurrListOfMovieResults([
+  //         ...currListOfMovieResults,
+  //         ...data.Search,
+  //       ]);
+  //     })
+  //     .catch((err) => {
+  //       console.log("err: ", err);
+  //     });
+
+  //     return;
+  //   }
+
+  // }, [currPageQuery])
 
   useEffect(() => {
     if (currNominations.length === maxNumberOfNominations) {
@@ -199,20 +228,16 @@ const App = () => {
 
   const loadMoreResults = () => {
     let currentUserQueryState = { ...currentFilterQuery };
+
     if (+totalResults / +currentUserQueryState.pageQuery <= 10) {
-      console.log(
-        "+totalResults / +currentUserQueryState.pageQuery >= 10: ",
-        +totalResults / +currentUserQueryState.pageQuery >= 10
-      );
-      console.log("totalResults: ", totalResults);
-      console.log(
-        "currentUserQueryState.pageQuery: ",
-        currentUserQueryState.pageQuery
-      );
+      // also disable button
       return;
     }
+
     currentUserQueryState.pageQuery = `${+currentUserQueryState.pageQuery + 1}`;
+
     setCurrentFilterQuery(currentUserQueryState);
+    // setCurrPageQuery(currentUserQueryState.pageQuery);
   };
 
   return (
@@ -226,6 +251,7 @@ const App = () => {
             <a
               href="https://www.linkedin.com/in/rushabhparekh33/?originalSubdomain=ca"
               target="_blank"
+              rel="noreferrer"
             >
               <p>by Rushabh Parekh</p>
             </a>

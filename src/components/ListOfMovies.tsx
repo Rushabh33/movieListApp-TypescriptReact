@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { MovieData } from "../App";
 import MovieCard from "./MovieCards";
