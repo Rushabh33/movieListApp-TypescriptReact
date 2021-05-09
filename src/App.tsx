@@ -6,9 +6,11 @@ import Nominations from "./components/Nominations";
 import ListOfMovies from "./components/ListOfMovies";
 
 const AppContainer = styled.div`
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-bottom: 30px;
+
   a:first-child p {
     font-size: 1.2rem;
   }
@@ -44,12 +46,13 @@ const AlertBanner = styled.div<{ notificationTrigger: boolean }>`
   height: ${(props) => (props.notificationTrigger ? "40px" : 0)};
   width: 100%;
   overflow: hidden;
-  transition: all 6s;
-  background: grey;
+  transition: all 2s;
+  background: #f8bdbd;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  color: #464646;
 
   position: absolute;
   top: 60px;
@@ -184,7 +187,7 @@ const App = () => {
     setNotificationTrigger(true);
     setTimeout(() => {
       setNotificationTrigger(false);
-    }, 5000);
+    }, 8000);
   };
 
   const loadMoreResults = () => {

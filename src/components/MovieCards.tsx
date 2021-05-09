@@ -63,7 +63,7 @@ const StyledButton = styled.button`
 const noResultData = [
   {
     Poster: "poster",
-    Title: "Sorry there are no titles that match your search",
+    Title: "Sorry there are no titles that match your search, try again",
     Type: "try choosing seach for a new name or year",
     Year: "",
     imdbID: "placeholder",
