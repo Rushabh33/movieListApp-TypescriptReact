@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { MovieData } from "../App";
-import MovieCard from "../components/MovieCard";
+import MovieCard from "./MovieCards";
 
 const Title = styled.h1`
   text-align: center;

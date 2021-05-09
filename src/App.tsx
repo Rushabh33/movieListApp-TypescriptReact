@@ -39,9 +39,10 @@ const NavContents = styled(Wrapper)`
   }
 `;
 
-const AlertBanner = styled(Wrapper)<{ notificationTrigger: boolean }>`
+const AlertBanner = styled.div<{ notificationTrigger: boolean }>`
   opacity: ${(props) => (props.notificationTrigger ? 1 : 0)};
   height: ${(props) => (props.notificationTrigger ? "40px" : 0)};
+  width: 100%;
   overflow: hidden;
   transition: all 6s;
   background: grey;
@@ -72,7 +73,6 @@ type MovieApiResponse = {
   Response: string;
   Error?: string;
   totalResults?: string;
-  // I"M CONFUSED, shouldn't this be 'Search?'?!?!!?!
   Search: Array<MovieData>;
 };
 
@@ -110,7 +110,7 @@ const App = () => {
     pageQuery: "1",
   });
   const [currNominations, setCurrNominations] = useState<MovieData[]>([]);
-  const [currListOfMovieResults, setcurrListOfMovieResults] = useState<
+  const [currListOfMovieResults, setCurrListOfMovieResults] = useState<
     MovieData[]
   >([]);
   const [isMaxNomination, setIsMaxNomination] = useState<boolean>(false);
@@ -123,13 +123,19 @@ const App = () => {
   useEffect(() => {
     if (currentFilterQuery && currentFilterQuery.searchQuery) {
       getMoviesApi(currentFilterQuery).then((data) => {
-        console.log("data: ", data);
         if (data.Response.toLowerCase() === "false") {
-          console.log("FIX data response issue ", data.Response);
-          setcurrListOfMovieResults([]);
+          setCurrListOfMovieResults([]);
           return;
         }
-        data.Search && setcurrListOfMovieResults(data.Search);
+        if (currentFilterQuery.pageQuery > "1") {
+          data.Search &&
+            setCurrListOfMovieResults([
+              ...currListOfMovieResults,
+              ...data.Search,
+            ]);
+          return;
+        }
+        data.Search && setCurrListOfMovieResults([...data.Search]);
         data.totalResults && setTotalResults(data.totalResults);
       });
     }
@@ -181,13 +187,20 @@ const App = () => {
     }, 5000);
   };
 
+  const loadMoreResults = () => {
+    let currentUserQueryState = { ...currentFilterQuery };
+    currentUserQueryState.pageQuery = `${+currentUserQueryState.pageQuery + 1}`;
+    setCurrentFilterQuery(currentUserQueryState);
+    console.log("currentUserQueryState: ", currentUserQueryState);
+  };
+
   return (
     <AppContainer>
       <AppHeader>
         <AppNav>
           <NavContents>
             <a href="/">
-              <p>The Shoppies</p>{" "}
+              <p>The Shoppies</p>
             </a>
             <a
               href="https://www.linkedin.com/in/rushabhparekh33/?originalSubdomain=ca"
@@ -203,7 +216,6 @@ const App = () => {
           handleRemoveNomination={handleRemoveNomination}
         />
         <AlertBanner notificationTrigger={notificationTrigger}>
-          {/* <img src="" alt="" /> */}
           <p>You've reached your maximum number of nominations</p>
           <p>Remove to add new nominations</p>
         </AlertBanner>
@@ -214,6 +226,7 @@ const App = () => {
           currListOfMovieResults={currListOfMovieResults}
           currNominations={currNominations}
           handleAddNomination={handleAddNomination}
+          loadMoreResults={loadMoreResults}
         />
       </main>
     </AppContainer>

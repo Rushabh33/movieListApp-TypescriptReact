@@ -44,6 +44,7 @@ const MoviePoster = styled.img`
 const MovieCardContent = styled.div`
   text-align: center;
   margin-bottom: 5px;
+  padding: 0 10px;
 
   p:first-child {
     height: 35px;
@@ -62,10 +63,19 @@ const StyledButton = styled.button`
 const noResultData = [
   {
     Poster: "poster",
-    Title: "string",
-    Type: "string",
-    Year: "string",
-    imdbID: "string",
+    Title: "Sorry there are no titles that match your search",
+    Type: "try choosing seach for a new name or year",
+    Year: "",
+    imdbID: "placeholder",
+  },
+];
+const placeHolderData = [
+  {
+    Poster: "poster",
+    Title: "Head to 'Choose your Nominees' to nominate",
+    Type: "",
+    Year: "",
+    imdbID: "placeholder",
   },
 ];
 
@@ -86,14 +96,25 @@ const MovieCard = (props: ComponentProps) => {
     currNominations && currNominations.map((movieData) => movieData.imdbID);
 
   const displayMovies = (data: MovieData[]) => {
-    const dataToDisplay = data.length ? data : noResultData;
+    const dataToDisplay = data.length
+      ? data
+      : isNomineeList
+      ? placeHolderData
+      : noResultData;
+
     let isDisabled: boolean = false;
+    if (data.length) {
+    }
 
     return dataToDisplay.map((individualMovieData) => {
-      if (props.isNomineeList === false) {
+      if (!isNomineeList) {
         isDisabled = currNominationIds.includes(individualMovieData.imdbID)
           ? true
           : false;
+      }
+
+      if (individualMovieData.imdbID === "placeholder") {
+        isDisabled = true;
       }
 
       return (
@@ -106,8 +127,6 @@ const MovieCard = (props: ComponentProps) => {
           <MovieCardContent>
             <p>{individualMovieData.Title}</p>
             <p>{individualMovieData.Year}</p>
-            <p>{individualMovieData.Type}</p>
-            <p>{individualMovieData.imdbID}</p>
           </MovieCardContent>
           {isNomineeList ? (
             <StyledButton

@@ -19,11 +19,14 @@ const StyledH2 = styled.h2`
 
 const InputStyled = styled.input`
   background: #d7d7d7;
-  width: 100%;
+  width: 150px;
+  margin-left: 5px;
+  margin-top: 15px;
 `;
 
 const YearInput = styled(InputStyled)`
-  width: 30%;
+  width: 10%;
+  min-width: 80px;
   margin-left: 5px;
   margin-top: 15px;
 `;
@@ -36,7 +39,7 @@ const FilterInputs = (props: ComponentProps) => {
       <Wrapper>
         <StyledH2>Choose your Nominees</StyledH2>
         <div>
-          <label htmlFor="searchQuery">Search by name</label>
+          <label htmlFor="searchQuery">Search by name:</label>
           <InputStyled
             type="text"
             name="searchQuery"

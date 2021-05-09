@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { MovieData } from "../App";
-import MovieCard from "../components/MovieCard";
+import MovieCard from "./MovieCards";
 import Wrapper from "./Wrapper";
 
 const SectionTitle = styled.h2`
@@ -19,6 +19,7 @@ interface Props {
   currListOfMovieResults: MovieData[];
   currNominations: MovieData[];
   handleAddNomination: (movieId: string) => void;
+  loadMoreResults: () => void;
 }
 
 const ListOfMovies = (props: Props) => {
@@ -26,6 +27,7 @@ const ListOfMovies = (props: Props) => {
     currListOfMovieResults,
     currNominations,
     handleAddNomination,
+    loadMoreResults,
   } = props;
 
   return (
@@ -37,7 +39,7 @@ const ListOfMovies = (props: Props) => {
         isNomineeList={false}
         currListOfMovieResults={currListOfMovieResults}
       />
-      <LoadMoreButton>hello</LoadMoreButton>
+      <LoadMoreButton onClick={loadMoreResults}>hello</LoadMoreButton>
     </Wrapper>
   );
 };
