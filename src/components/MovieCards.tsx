@@ -119,7 +119,7 @@ const MovieCard = (props: ComponentProps) => {
       }
 
       return (
-        <MovieCardsLi key={individualMovieData.imdbID}>
+        <MovieCardsLi key={individualMovieData.imdbID + isNomineeList}>
           <MoviePoster
             src={individualMovieData.Poster}
             onError={addDefaultSrc}

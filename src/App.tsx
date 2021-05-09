@@ -125,22 +125,27 @@ const App = () => {
 
   useEffect(() => {
     if (currentFilterQuery && currentFilterQuery.searchQuery) {
-      getMoviesApi(currentFilterQuery).then((data) => {
-        if (data.Response.toLowerCase() === "false") {
-          setCurrListOfMovieResults([]);
-          return;
-        }
-        if (currentFilterQuery.pageQuery > "1") {
-          data.Search &&
-            setCurrListOfMovieResults([
-              ...currListOfMovieResults,
-              ...data.Search,
-            ]);
-          return;
-        }
-        data.Search && setCurrListOfMovieResults([...data.Search]);
-        data.totalResults && setTotalResults(data.totalResults);
-      });
+      getMoviesApi(currentFilterQuery)
+        .then((data) => {
+          if (data.Response.toLowerCase() === "false") {
+            setCurrListOfMovieResults([]);
+            return;
+          }
+          if (currentFilterQuery.pageQuery > "1") {
+            data.Search &&
+              setCurrListOfMovieResults([
+                ...currListOfMovieResults,
+                ...data.Search,
+              ]);
+            return;
+          }
+          data.Search && setCurrListOfMovieResults([...data.Search]);
+          data.totalResults && setTotalResults(data.totalResults);
+          console.log("data.totalResults: ", data.totalResults);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
     }
   }, [currentFilterQuery]);
 
@@ -158,10 +163,12 @@ const App = () => {
 
     if (evt.target.name === "searchQuery") {
       currentUserQueryState.searchQuery = evt.target.value;
+      currentUserQueryState.pageQuery = "1";
     }
 
     if (evt.target.name === "yearQuery") {
       currentUserQueryState.yearQuery = evt.target.value;
+      currentUserQueryState.pageQuery = "1";
     }
     setCurrentFilterQuery(currentUserQueryState);
   };
@@ -192,9 +199,20 @@ const App = () => {
 
   const loadMoreResults = () => {
     let currentUserQueryState = { ...currentFilterQuery };
+    if (+totalResults / +currentUserQueryState.pageQuery <= 10) {
+      console.log(
+        "+totalResults / +currentUserQueryState.pageQuery >= 10: ",
+        +totalResults / +currentUserQueryState.pageQuery >= 10
+      );
+      console.log("totalResults: ", totalResults);
+      console.log(
+        "currentUserQueryState.pageQuery: ",
+        currentUserQueryState.pageQuery
+      );
+      return;
+    }
     currentUserQueryState.pageQuery = `${+currentUserQueryState.pageQuery + 1}`;
     setCurrentFilterQuery(currentUserQueryState);
-    console.log("currentUserQueryState: ", currentUserQueryState);
   };
 
   return (
