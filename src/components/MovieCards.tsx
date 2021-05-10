@@ -107,7 +107,7 @@ const MovieCard = (props: ComponentProps) => {
     if (data.length) {
     }
 
-    return dataToDisplay.map((individualMovieData) => {
+    return dataToDisplay.map((individualMovieData, index) => {
       if (!isNomineeList) {
         isDisabled = currNominationIds.includes(individualMovieData.imdbID)
           ? true
@@ -119,7 +119,7 @@ const MovieCard = (props: ComponentProps) => {
       }
 
       return (
-        <MovieCardsLi key={individualMovieData.imdbID + isNomineeList}>
+        <MovieCardsLi key={index + `${isNomineeList}`}>
           <MoviePoster
             src={individualMovieData.Poster}
             onError={addDefaultSrc}
@@ -137,7 +137,7 @@ const MovieCard = (props: ComponentProps) => {
                 handleRemoveNomination(individualMovieData.imdbID)
               }
             >
-              remove Nom
+              Remove Nomination
             </StyledButton>
           ) : (
             <StyledButton
@@ -147,7 +147,7 @@ const MovieCard = (props: ComponentProps) => {
                 handleAddNomination(individualMovieData.imdbID)
               }
             >
-              Add Nom
+              Nominate
             </StyledButton>
           )}
         </MovieCardsLi>

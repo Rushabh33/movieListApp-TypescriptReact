@@ -173,10 +173,11 @@ const App = () => {
     if (isMaxNomination === true) {
       return;
     }
-    const movieToNominate = currListOfMovieResults.filter((movieData) => {
+    const movieToNominate = currListOfMovieResults.find((movieData) => {
       return movieData.imdbID === movieId;
     });
-    setCurrNominations([...currNominations, ...movieToNominate]);
+    movieToNominate &&
+      setCurrNominations([...currNominations, movieToNominate]);
   };
 
   const handleRemoveNomination = (param: string) => {
