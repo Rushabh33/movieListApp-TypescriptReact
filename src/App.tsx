@@ -124,7 +124,7 @@ const App = () => {
   const maxNumberOfNominations = 5;
 
   useEffect(() => {
-    if (currentFilterQuery && currentFilterQuery.searchQuery) {
+    if (currentFilterQuery) {
       getMoviesApi(currentFilterQuery)
         .then((data) => {
           if (data.Response.toLowerCase() === "false") {
@@ -158,7 +158,12 @@ const App = () => {
     let currentUserQueryState = { ...currentFilterQuery };
 
     if (evt.target.name === "searchQuery") {
+      console.log("evt.target.value: ", evt.target.value);
       currentUserQueryState.searchQuery = evt.target.value;
+      console.log(
+        "currentUserQueryState.searchQuery: ",
+        currentUserQueryState.searchQuery
+      );
       currentUserQueryState.pageQuery = "1";
     }
 
