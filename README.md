@@ -1,3 +1,3 @@
-Rushabh's Shoppies
+Rushabh's lists of movies
 
-Search for movies and nominate your top 5 :)
+Current: Search for movies and nominate your top 5 :)
