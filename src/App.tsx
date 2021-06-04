@@ -131,7 +131,7 @@ const App = () => {
             setCurrListOfMovieResults([]);
             return;
           }
-          if (+currentFilterQuery.pageQuery > +"1") {
+          if (+currentFilterQuery.pageQuery > 1) {
             // learn to apply useRef() this instead of ...prev
             setCurrListOfMovieResults((prev) => [...prev, ...data.Search]);
             return;
@@ -158,12 +158,7 @@ const App = () => {
     let currentUserQueryState = { ...currentFilterQuery };
 
     if (evt.target.name === "searchQuery") {
-      console.log("evt.target.value: ", evt.target.value);
       currentUserQueryState.searchQuery = evt.target.value;
-      console.log(
-        "currentUserQueryState.searchQuery: ",
-        currentUserQueryState.searchQuery
-      );
       currentUserQueryState.pageQuery = "1";
     }
 
@@ -218,7 +213,7 @@ const App = () => {
         <AppNav>
           <NavContents>
             <a href="/">
-              <p>The Shoppies</p>
+              <p>Nominate Your Favorite Movies</p>
             </a>
             <a
               href="https://www.linkedin.com/in/rushabhparekh33/?originalSubdomain=ca"

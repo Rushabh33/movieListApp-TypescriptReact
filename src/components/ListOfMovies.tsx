@@ -39,9 +39,9 @@ const ListOfMovies = (props: Props) => {
         isNomineeList={false}
         currListOfMovieResults={currListOfMovieResults}
       />
-      <LoadMoreButton onClick={loadMoreResults}>
+      {currListOfMovieResults.length ? <LoadMoreButton onClick={loadMoreResults}>
         Load More Results
-      </LoadMoreButton>
+      </LoadMoreButton> : null}
     </Wrapper>
   );
 };
